@@ -129,24 +129,15 @@ def update_mcp_env():
 map_chain = dict() 
 
 def initiate():
-    global memory_chain, checkpointer, memorystore, checkpointers, memorystores
+    global memory_chain
 
     if user_id in map_chain:  
         logger.info(f"memory exist. reuse it!")
         memory_chain = map_chain[user_id]
-
-        checkpointer = checkpointers[user_id]
-        memorystore = memorystores[user_id]
     else: 
         logger.info(f"memory not exist. create new memory!")
         memory_chain = ConversationBufferWindowMemory(memory_key="chat_history", output_key='answer', return_messages=True, k=5)
         map_chain[user_id] = memory_chain
-
-        checkpointer = MemorySaver()
-        memorystore = InMemoryStore()
-
-        checkpointers[user_id] = checkpointer
-        memorystores[user_id] = memorystore
 
 def clear_chat_history():
     # Initialize memory chain
