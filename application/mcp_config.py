@@ -14,14 +14,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger("mcp-config")
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-config_path = os.path.join(script_dir, "config.json")
-
-config = utils.load_config()
-logger.info(f"config: {config}")
-
-region = config["region"] if "region" in config else "us-west-2"
-projectName = config["projectName"] if "projectName" in config else "mcp"
 workingDir = os.path.dirname(os.path.abspath(__file__))
 logger.info(f"workingDir: {workingDir}")
 
