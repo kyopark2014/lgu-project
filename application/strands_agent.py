@@ -429,7 +429,7 @@ def update_tools(strands_tools: list, mcp_servers: list):
     tool_map = {
         "calculator": calculator,
         "current_time": current_time,
-        "use_aws": use_aws,
+        # "use_aws": use_aws,
         "speak": speak
         # "python_repl": python_repl  # Temporarily disabled
     }

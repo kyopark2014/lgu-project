@@ -1,0 +1,12 @@
+{
+  "projectName": "lgu",
+  "region": "us-west-2",
+  "accountId": "262976740991",
+  "bucket_name": "storage-for-lgu-262976740991-us-west-2",
+  "s3_vector_bucket_name": "s3-vector-for-lgu-262976740991-us-west-2",
+  "s3_vector_bucket_arn": "arn:aws:s3vectors:us-west-2:262976740991:bucket/s3-vector-for-lgu-262976740991-us-west-2",
+  "s3_vector_index_name": "s3-vector-index-for-lgu-262976740991-us-west-2",
+  "s3_vector_index_arn": "arn:aws:s3vectors:us-west-2:262976740991:bucket/s3-vector-for-lgu-262976740991-us-west-2/index/s3-vector-index-for-lgu-262976740991-us-west-2",
+  "knowledge_base_id": "XBKZSCRGKZ",
+  "data_source_name": "data-source-for-lgu-us-west-2"
+}
