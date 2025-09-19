@@ -293,20 +293,20 @@ def create_knowledge_base(knowledge_base_name, region):
                 },
                 dataDeletionPolicy="RETAIN",
                 vectorIngestionConfiguration={
-                    # "chunkingConfiguration": {
-                    #     "chunkingStrategy": "HIERARCHICAL",
-                    #     "hierarchicalChunkingConfiguration": {
-                    #         "levelConfigurations": [
-                    #             {
-                    #                 'maxTokens': 1500
-                    #             },
-                    #             {
-                    #                 'maxTokens': 300
-                    #             }
-                    #         ],
-                    #         'overlapTokens': 60
-                    #     }
-                    # },
+                    "chunkingConfiguration": {
+                        "chunkingStrategy": "HIERARCHICAL",
+                        "hierarchicalChunkingConfiguration": {
+                            "levelConfigurations": [
+                                {
+                                    'maxTokens': 300
+                                },
+                                {
+                                    'maxTokens': 150
+                                }
+                            ],
+                            'overlapTokens': 60
+                        }
+                    },
                     'parsingConfiguration': {
                         'bedrockFoundationModelConfiguration': {
                             'modelArn': parsingModelArn,
