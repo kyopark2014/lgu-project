@@ -200,7 +200,7 @@ streamlit run application/app.py
 
 여기에서는 아래와 같이 여러 MCP 서버를 선택하여 활용할 수 있습니다.
 
-<img width="300" alt="image" src="https://github.com/user-attachments/assets/a794ec1e-14b3-4985-8c14-16261175d232" />
+<img width="350" alt="image" src="https://github.com/user-attachments/assets/a794ec1e-14b3-4985-8c14-16261175d232" />
 
 
 왼쪽 메뉴에서 Agent와 "RAG" MCP를 선택하고 질문을 입력하면, RAG로 부터 문서를 조회하여 아래와 같은 결과를 얻을 수 있습니다.
