@@ -4,9 +4,9 @@
 
 <img width="800" alt="image" src="https://github.com/user-attachments/assets/70c4d8b0-8ff3-4c9f-aa4f-a4719e3e5a8b" />
 
-## MCP와 LangGraph를 이용하여 Agent 구현하기
+## MCP Agent 구현하기
 
-아래에서는 MCP와 LangGraph를 이용해 RAG 등을 활용할 수 있는 Agent를 구현하는 방법에 대해 설명합니다.
+아래에서는 MCP와 Strands SDK를 이용해 RAG 등을 활용할 수 있는 Agent를 구현하는 방법에 대해 설명합니다.
 
 ### Agent
 
