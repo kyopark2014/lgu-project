@@ -51,9 +51,6 @@ mode_descriptions = {
     ],
     "Agent (Chat)": [
         "MCP를 활용한 Strandds Agent를 이용합니다. 채팅 히스토리를 이용해 interative한 대화를 즐길 수 있습니다."
-    ],
-    "이미지 분석": [
-        "이미지를 선택하여 멀티모달을 이용하여 분석합니다."
     ]
 }
 
@@ -73,7 +70,7 @@ with st.sidebar:
     
     # radio selection
     mode = st.radio(
-        label="원하는 대화 형태를 선택하세요. ",options=["일상적인 대화", "RAG", "Agent", "Agent (Chat)", "이미지 분석"], index=2
+        label="원하는 대화 형태를 선택하세요. ",options=["일상적인 대화", "RAG", "Agent", "Agent (Chat)"], index=2
     )   
     st.info(mode_descriptions[mode][0])
     
@@ -171,11 +168,6 @@ with st.sidebar:
     gradingMode = 'Disable'
     # logger.info(f"gradingMode: {gradingMode}")
 
-    uploaded_file = None
-    if mode=='이미지 분석':
-        st.subheader("🌇 이미지 업로드")
-        uploaded_file = st.file_uploader("이미지 분석을 위한 파일을 선택합니다.", type=["png", "jpg", "jpeg"])
-
     chat.update(modelName, debugMode, reasoningMode, gradingMode)    
 
     st.success(f"Connected to {modelName}", icon="💚")
@@ -189,19 +181,6 @@ if clear_button==True:
     chat.checkpointers = dict() 
     chat.memorystores = dict() 
     chat.initiate()
-
-# Preview the uploaded image in the sidebar
-file_name = ""
-file_bytes = None
-state_of_code_interpreter = False
-if uploaded_file is not None and clear_button==False:
-    logger.info(f"uploaded_file.name: {uploaded_file.name}")
-
-    if uploaded_file and clear_button==False and mode == '이미지 분석':
-        st.image(uploaded_file, caption="이미지 미리보기", use_container_width=True)
-
-        file_name = uploaded_file.name
-        file_bytes = uploaded_file.getvalue()
 
 # Initialize chat history
 if "messages" not in st.session_state:
@@ -266,20 +245,14 @@ if prompt := st.chat_input("메시지를 입력하세요."):
             logger.info(f"response: {response}")
             st.session_state.messages.append({"role": "assistant", "content": response})
 
-            chat.save_chat_history(prompt, response)
-
         elif mode == 'RAG':
             with st.status("running...", expanded=True, state="running") as status:
-                response, reference_docs = chat.run_rag_with_knowledge_base(prompt, st)                           
-                st.write(response)
+                response_generator = chat.run_rag_with_knowledge_base(prompt, st)
+                response = st.write_stream(response_generator)
                 logger.info(f"response: {response}")
 
                 st.session_state.messages.append({"role": "assistant", "content": response})
-
-                chat.save_chat_history(prompt, response)
-            
-            show_references(reference_docs) 
-                
+                        
         elif mode == 'Agent' or mode == 'Agent (Chat)':            
             sessionState = ""
             if mode == 'Agent':
@@ -312,21 +285,6 @@ if prompt := st.chat_input("메시지를 입력하세요."):
                 file_name = url[url.rfind('/')+1:]
                 st.image(url, caption=file_name, use_container_width=True)
                 
-        elif mode == "이미지 분석":
-            if uploaded_file is None or uploaded_file == "":
-                st.error("파일을 먼저 업로드하세요.")
-                st.stop()
-
-            else:
-                if modelName == "Claude 3.5 Haiku":
-                    st.error("Claude 3.5 Haiku은 이미지를 지원하지 않습니다. 다른 모델을 선택해주세요.")
-                else:
-                    with st.status("thinking...", expanded=True, state="running") as status:
-                        summary = chat.summarize_image(file_bytes, prompt, st)
-                        st.write(summary)
-
-                        st.session_state.messages.append({"role": "assistant", "content": summary})
-
 def main():
     """Entry point for the application."""
     # This function is used as an entry point when running as a package

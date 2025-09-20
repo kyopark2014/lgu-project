@@ -1,0 +1,8 @@
+streamlit
+streamlit-chat
+boto3
+mcp
+requests
+uv
+graphviz
+rich
