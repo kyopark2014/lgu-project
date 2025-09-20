@@ -1,6 +1,6 @@
 # Agent and MCP
 
-여기에서는 [Strands SDK](https://strandsagents.com/latest/documentation/docs/) 기반의 Agent와 MCP를 활용하는 방법에 대해 설명합니다. 전체적인 architecture는 아래와 같습니다. 개발의 편의를 위하여 [Streamlit](https://streamlit.io/)을 이용해 UI를 구성하고, stdio 방식의 custom MCP 서버를 정의하여 활용합니다. 여기에서는 강력하면서도 쉽게 사용할 수 있는 완전관리형 RAG 서비스인 Knowledge Base를 [kb-retriever](./application/mcp_server_retrieve.py)를 이용해 RAG를 구성합니다. 각종 데이터의 분석을 수행하는 Code Interpreter는 [repl-coder](./application/mcp_server_repl_coder.py)을 이용합니다. 또한 AWS의 각종 리소스를 AWS CLI 기반으로 관리할 수 있는 [use-aws](./application/mcp_server_use_aws.py)을 이용해 MCP로 편리하게 이용할 수 있습니다.
+여기에서는 [Strands SDK](https://strandsagents.com/latest/documentation/docs/) 기반의 Agent와 MCP를 활용하는 방법에 대해 설명합니다. 전체적인 architecture는 아래와 같습니다. 개발의 편의를 위하여 [Streamlit](https://streamlit.io/)을 이용해 UI를 구성하고, stdio 방식의 custom MCP 서버를 정의하여 활용합니다. 여기에서는 강력하면서도 쉽게 사용할 수 있는 완전관리형 RAG 서비스인 Knowledge Base를 [kb-retriever](./application/mcp_server_retrieve.py)를 이용해 RAG를 구성합니다. 각종 데이터의 분석을 수행하는 Code Interpreter는 [repl-coder](./application/mcp_server_repl_coder.py)을 이용합니다. 또한 AWS의 각종 문서를 MCP로 조회하는 [AWS Documentation](https://awslabs.github.io/mcp/servers/aws-documentation-mcp-server/)을 활용할 수 있습니다.
 
 <img width="800" alt="image" src="https://github.com/user-attachments/assets/70c4d8b0-8ff3-4c9f-aa4f-a4719e3e5a8b" />
 
