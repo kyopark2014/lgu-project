@@ -65,7 +65,6 @@ def create_agent(system_prompt, tools, history_mode):
 
     model = get_model()
     if history_mode == "Enable":
-        logger.info("history_mode: Enable")
         agent = Agent(
             model=model,
             system_prompt=system_prompt,
@@ -73,7 +72,6 @@ def create_agent(system_prompt, tools, history_mode):
             conversation_manager=conversation_manager
         )
     else:
-        logger.info("history_mode: Disable")
         agent = Agent(
             model=model,
             system_prompt=system_prompt,
