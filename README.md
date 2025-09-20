@@ -211,8 +211,3 @@ MCP로 "code interpreter"를 선택한 후에 "DNA의 나선형 구조를 그려
 
 <img width="800" alt="image" src="https://github.com/user-attachments/assets/cb3988b3-3f03-4e75-993b-d380d2ef3ad7" />
 
-왼쪽 메뉴에서 "QA Agent"를 선택하고 아래와 같이 질문을 하면 RAG에서 얻어진 문서를 바탕으로 Test case들을 생성할 수 있습니다.
-
-<img width="800" alt="image" src="https://github.com/user-attachments/assets/c5f0deb5-8f56-458e-a5d5-f0b953e90c6f" />
-
-
