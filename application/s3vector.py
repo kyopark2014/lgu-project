@@ -279,46 +279,60 @@ def create_knowledge_base(knowledge_base_name, region):
         data_sources = response.get('dataSources', [])
         logger.info(f"data_sources: {data_sources}")
 
-        if not any(data_source['dataSourceName'] == data_source_name for data_source in data_sources):
-            response = boto3.client('bedrock-agent').create_data_source(
-                knowledgeBaseId=knowledge_base_id,
-                name=data_source_name,
-                description=f"Data source for {projectName} using s3 vector",
-                dataSourceConfiguration={
-                    "type": "S3",
-                    "s3Configuration": {
-                        "bucketArn": f"arn:aws:s3:::{utils.bucket_name}",
-                        "inclusionPrefixes": ["docs/"]
-                    }
-                },
-                dataDeletionPolicy="RETAIN",
-                vectorIngestionConfiguration={
-                    "chunkingConfiguration": {
-                        "chunkingStrategy": "HIERARCHICAL",
-                        "hierarchicalChunkingConfiguration": {
-                            "levelConfigurations": [
-                                {
-                                    'maxTokens': 300
-                                },
-                                {
-                                    'maxTokens': 150
-                                }
-                            ],
-                            'overlapTokens': 60
+        # Check if data source exists
+        existing_data_source = None
+        for data_source in data_sources:
+            if data_source.get('dataSourceName') == data_source_name:
+                existing_data_source = data_source
+                break
+
+        if not existing_data_source:
+            try:
+                response = boto3.client('bedrock-agent').create_data_source(
+                    knowledgeBaseId=knowledge_base_id,
+                    name=data_source_name,
+                    description=f"Data source for {projectName} using s3 vector",
+                    dataSourceConfiguration={
+                        "type": "S3",
+                        "s3Configuration": {
+                            "bucketArn": f"arn:aws:s3:::{utils.bucket_name}",
+                            "inclusionPrefixes": ["docs/"]
                         }
                     },
-                    'parsingConfiguration': {
-                        'bedrockFoundationModelConfiguration': {
-                            'modelArn': parsingModelArn,
-                            'parsingModality': 'MULTIMODAL'
+                    dataDeletionPolicy="RETAIN",
+                    vectorIngestionConfiguration={
+                        "chunkingConfiguration": {
+                            "chunkingStrategy": "HIERARCHICAL",
+                            "hierarchicalChunkingConfiguration": {
+                                "levelConfigurations": [
+                                    {
+                                        'maxTokens': 300
+                                    },
+                                    {
+                                        'maxTokens': 150
+                                    }
+                                ],
+                                'overlapTokens': 60
+                            }
                         },
-                        'parsingStrategy': 'BEDROCK_FOUNDATION_MODEL'
+                        'parsingConfiguration': {
+                            'bedrockFoundationModelConfiguration': {
+                                'modelArn': parsingModelArn,
+                                'parsingModality': 'MULTIMODAL'
+                            },
+                            'parsingStrategy': 'BEDROCK_FOUNDATION_MODEL'
+                        }
                     }
-                }
-            )
-            logger.info(f"{knowledge_base_name} is created.")
+                )
+                logger.info(f"Created data source: {data_source_name}")
+            except Exception as e:
+                if "already exists" in str(e):
+                    logger.info(f"Data source {data_source_name} already exists.")
+                else:
+                    logger.error(f"Failed to create data source: {e}")
+                    raise e
         else:
-            logger.info(f"{knowledge_base_name} is already exists.")
+            logger.info(f"Data source {data_source_name} already exists.")
 
     with open(config_path, "w", encoding="utf-8") as f:
         json.dump(config, f, indent=2)
