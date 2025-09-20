@@ -6,3 +6,4 @@ requests
 uv
 graphviz
 rich
+langchain_experimental

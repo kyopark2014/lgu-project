@@ -2,7 +2,6 @@ import logging
 import sys
 import mcp_repl_coder as coder
 
-from typing import Dict, Optional, Any
 from mcp.server.fastmcp import FastMCP 
 
 logging.basicConfig(

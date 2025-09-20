@@ -93,21 +93,7 @@ def get_model():
             config=bedrock_config
         )
 
-    if chat.reasoning_mode=='Enable' and chat.model_type != 'openai':
-        model = BedrockModel(
-            client=bedrock_client,
-            model_id=chat.model_id,
-            max_tokens=64000,
-            stop_sequences = [STOP_SEQUENCE],
-            temperature = 1,
-            additional_request_fields={
-                "thinking": {
-                    "type": "enabled",
-                    "budget_tokens": thinking_budget,
-                }
-            },
-        )
-    elif chat.reasoning_mode=='Disable' and chat.model_type != 'openai':
+    if chat.model_type != 'openai':
         model = BedrockModel(
             client=bedrock_client,
             model_id=chat.model_id,
@@ -121,7 +107,7 @@ def get_model():
                 }
             }
         )
-    elif chat.model_type == 'openai':
+    else:
         model = BedrockModel(
             model=chat.model_id,
             region=aws_region,

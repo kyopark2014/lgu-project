@@ -1,14 +1,11 @@
-import traceback
 import boto3
 import os
 import json
 import re
-import uuid
 import info 
 import utils
 import strands_agent
 
-from langchain_aws import ChatBedrock
 from botocore.config import Config
 
 import logging
@@ -27,7 +24,6 @@ config_path = os.path.join(script_dir, "config.json")
 
 logger = logging.getLogger("chat")
 
-reasoning_mode = 'Disable'
 debug_messages = []  # List to store debug messages
 
 config = utils.load_config()
@@ -67,12 +63,10 @@ aws_access_key = config.get('aws', {}).get('access_key_id')
 aws_secret_key = config.get('aws', {}).get('secret_access_key')
 aws_session_token = config.get('aws', {}).get('session_token')
 
-reasoning_mode = 'Disable'
-grading_mode = 'Disable'
 user_id = "mcp"
 
-def update(modelName, debugMode, reasoningMode, gradingMode):    
-    global model_name, model_id, model_type, debug_mode, reasoning_mode, grading_mode
+def update(modelName, debugMode):    
+    global model_name, model_id, model_type, debug_mode
     global models, user_id
 
     # load mcp.env    
@@ -90,28 +84,9 @@ def update(modelName, debugMode, reasoningMode, gradingMode):
         debug_mode = debugMode        
         logger.info(f"debug_mode: {debug_mode}")
 
-    if reasoning_mode != reasoningMode:
-        reasoning_mode = reasoningMode
-        logger.info(f"reasoning_mode: {reasoning_mode}")    
-
-    if grading_mode != gradingMode:
-        grading_mode = gradingMode
-        logger.info(f"grading_mode: {grading_mode}")            
-        mcp_env['grading_mode'] = grading_mode
-
     # update mcp.env    
     utils.save_mcp_env(mcp_env)
     # logger.info(f"mcp.env updated: {mcp_env}")
-
-def update_mcp_env():
-    mcp_env = utils.load_mcp_env()
-    
-    mcp_env['grading_mode'] = grading_mode
-    user_id = "mcp"
-    mcp_env['user_id'] = user_id
-
-    utils.save_mcp_env(mcp_env)
-    logger.info(f"mcp.env updated: {mcp_env}")
 
 map_chain = dict() 
 
@@ -142,7 +117,7 @@ def general_conversation(query):
 
     prompt = (
         "<system>"
-        "You are a helpful assistant that answers questions based on the provided context."
+        "You are a helpful assistant that answers questions."
         "</system>"
         "<question>"
         "{query}"
@@ -150,13 +125,14 @@ def general_conversation(query):
     )
     prompt = prompt.format(query=query)
 
+    maxOutputTokens = 4096
     streaming_response = bedrock_client.invoke_model_with_response_stream(
-        modelId='anthropic.claude-3-5-sonnet-20240620-v1:0',
+        modelId=model_id,
         contentType='application/json',
         accept='application/json',
         body=json.dumps({
             'anthropic_version': 'bedrock-2023-05-31',
-            'max_tokens': 1000,
+            'max_tokens': maxOutputTokens,
             'messages': [
                 {
                     'role': 'user',
@@ -239,6 +215,8 @@ def run_rag_with_knowledge_base(query, st):
 
     json_docs = retrieve(query)    
     logger.info(f"json_docs: {json_docs}")
+    if debug_mode == "Enable":
+        st.info(f"relevant_context: {json_docs}")
 
     relevant_docs = json.loads(json_docs)
     relevant_context = ""
@@ -265,9 +243,9 @@ def run_rag_with_knowledge_base(query, st):
 
     prompt = rag_prompt.format(query=query, context=relevant_context)
 
-    maxOutputTokens = 4098
+    maxOutputTokens = 4096
     streaming_response = bedrock_client.invoke_model_with_response_stream(
-        modelId='anthropic.claude-3-5-sonnet-20240620-v1:0',
+        modelId=model_id,
         contentType='application/json',
         accept='application/json',
         body=json.dumps({
@@ -627,12 +605,12 @@ async def run_strands_agent(query, strands_tools, mcp_servers, history_mode, con
             else:
                 logger.info(f"event: {event}")
 
-        if references:
-            ref = "\n\n### Reference\n"
-            for i, reference in enumerate(references):
-                content = reference['content'][:100].replace("\n", "")
-                ref += f"{i+1}. [{reference['title']}]({reference['url']}), {content}...\n"    
-            final_result += ref
+        # if references:
+        #     ref = "\n\n### Reference\n"
+        #     for i, reference in enumerate(references):
+        #         content = reference['content'][:100].replace("\n", "")
+        #         ref += f"{i+1}. [{reference['title']}]({reference['url']}), {content}...\n"    
+        #     final_result += ref
 
         if containers is not None:
             containers['notification'][index].markdown(final_result)

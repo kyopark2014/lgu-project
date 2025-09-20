@@ -155,20 +155,7 @@ with st.sidebar:
     debugMode = 'Enable' if select_debugMode else 'Disable'
     #print('debugMode: ', debugMode)
 
-    # extended thinking of claude 3.7 sonnet
-    reasoningMode = "Disable"
-    if mode == "일상적인 대화" or mode == "RAG":
-        select_reasoning = st.checkbox('Reasoning', value=False)
-        reasoningMode = 'Enable' if select_reasoning else 'Disable'
-        # logger.info(f"reasoningMode: {reasoningMode}")
-
-    # RAG grading
-    # select_grading = st.checkbox('Grading', value=False)
-    # gradingMode = 'Enable' if select_grading else 'Disable'
-    gradingMode = 'Disable'
-    # logger.info(f"gradingMode: {gradingMode}")
-
-    chat.update(modelName, debugMode, reasoningMode, gradingMode)    
+    chat.update(modelName, debugMode)    
 
     st.success(f"Connected to {modelName}", icon="💚")
     clear_button = st.button("대화 초기화", key="clear")

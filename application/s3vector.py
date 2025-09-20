@@ -3,10 +3,7 @@ import sys
 import json
 import boto3
 import os
-import time
 import utils
-
-from langchain_community.utilities.tavily_search import TavilySearchAPIWrapper
 
 logging.basicConfig(
     level=logging.INFO,  # Default to INFO level
