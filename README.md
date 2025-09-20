@@ -63,9 +63,6 @@ def create_agent(system_prompt, tools, history_mode):
             "모르는 질문을 받으면 솔직히 모른다고 말합니다."
         )
 
-    if not system_prompt or not system_prompt.strip():
-        system_prompt = "You are a helpful AI assistant."
-
     model = get_model()
     if history_mode == "Enable":
         logger.info("history_mode: Enable")
