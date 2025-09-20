@@ -200,9 +200,9 @@ streamlit run application/app.py
 
 왼쪽 메뉴에서 Agent와 "RAG" MCP를 선택하고 질문을 입력하면, RAG로 부터 문서를 조회하여 아래와 같은 결과를 얻을 수 있습니다.
 
-<img width="800" alt="image" src="https://github.com/user-attachments/assets/0c8064cc-00ff-4d80-ac6c-01ff3b4c1d97" />
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/0c8064cc-00ff-4d80-ac6c-01ff3b4c1d97" />
 
 MCP로 "code interpreter"를 선택한 후에 "DNA의 나선형 구조를 그려주세요."을 입력합니다. 적절한 code를 생성하여 repl_coder를 이용해 아래와 같은 그림을 그릴 수 있습니다.
 
-<img width="800" alt="image" src="https://github.com/user-attachments/assets/cb3988b3-3f03-4e75-993b-d380d2ef3ad7" />
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/cb3988b3-3f03-4e75-993b-d380d2ef3ad7" />
 
