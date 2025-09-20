@@ -111,21 +111,6 @@ def get_contents_type(file_name):
         content_type = "no info"    
     return content_type
 
-def load_mcp_env():
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    mcp_env_path = os.path.join(script_dir, "mcp.env")
-    
-    with open(mcp_env_path, "r", encoding="utf-8") as f:
-        mcp_env = json.load(f)
-    return mcp_env
-
-def save_mcp_env(mcp_env):
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    mcp_env_path = os.path.join(script_dir, "mcp.env")
-    
-    with open(mcp_env_path, "w", encoding="utf-8") as f:
-        json.dump(mcp_env, f)
-
 # api key to get weather information in agent
 if aws_access_key and aws_secret_key:
     secretsmanager = boto3.client(

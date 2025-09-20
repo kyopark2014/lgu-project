@@ -68,9 +68,6 @@ user_id = "mcp"
 def update(modelName, debugMode):    
     global model_name, model_id, model_type, debug_mode
     global models, user_id
-
-    # load mcp.env    
-    mcp_env = utils.load_mcp_env()
     
     if model_name != modelName:
         model_name = modelName
@@ -83,10 +80,6 @@ def update(modelName, debugMode):
     if debug_mode != debugMode:
         debug_mode = debugMode        
         logger.info(f"debug_mode: {debug_mode}")
-
-    # update mcp.env    
-    utils.save_mcp_env(mcp_env)
-    # logger.info(f"mcp.env updated: {mcp_env}")
 
 map_chain = dict() 
 
