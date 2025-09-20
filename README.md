@@ -198,7 +198,7 @@ streamlit run application/app.py
 
 ### 실행 예제
 
-왼쪽 메뉴에서 Agent와 "Knowledge Base" MCP를 선택하고 질문을 입력하면, RAG로 부터 문서를 조회하여 아래와 같은 결과를 얻을 수 있습니다.
+왼쪽 메뉴에서 Agent와 "RAG" MCP를 선택하고 질문을 입력하면, RAG로 부터 문서를 조회하여 아래와 같은 결과를 얻을 수 있습니다.
 
 <img width="800" alt="image" src="https://github.com/user-attachments/assets/0c8064cc-00ff-4d80-ac6c-01ff3b4c1d97" />
 
