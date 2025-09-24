@@ -194,6 +194,23 @@ git clone https://github.com/kyopark2014/lgu-project && cd lgu-project
 streamlit run application/app.py
 ```
 
+2) AWS CLI 등록하기
+
+AWS Credential을 등록합니다.
+
+```text
+aws configure
+```
+
+만약 workshop 계정이라면 아래와 같이 등록합니다.
+
+```text
+aws configure set aws_access_key_id EXAMS3W4F4PXQPNBSBX1 --profile temp-session
+aws configure set aws_secret_access_key 12345keypKY8+PjqMcIsd6ekBihuBZ8s108aLUB --profile temp-session
+aws configure set aws_session_token 12345JpZ2luX2VjENf//////////wEaCXVzLWVhc3QtMSJIMEYCIQClUKSzIECB0539JSN4aTrhexamplehr/YZeVU0OWiTMtXHwOXKpECCF8QAhoMMTY2ODkxNzM4MDk1IgznJKQqAdztbP5ZMFMq7gGJAxf9ktRKhcZgdZA2cmTzPoBzqQ+YbIJ2dnPkq+Hz33yUuMda5HAFedTtgq7RTTQbtFsJIJGQTwrsJ8akumUCuOjmzLpE1VUhiBqmO+nbrJk4Xhmxvi0c2hPx98eiDLdDfr6R1iCW4nZtUrQmMWsNS5LUDNtTWwVipuXTnNxs/y+AWa/ugsHQiUArsGuy54MYmZkIuXW9pbwxjAingPz5fKJedtI4J2P99NCL8dYlPaYlb0qXGoHT90k9ehjRKvbiAR9tk --profile temp-session
+```
+
+
 
 
 ### 실행 예제
