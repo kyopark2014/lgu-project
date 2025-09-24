@@ -43,19 +43,33 @@ def load_config():
 config = load_config()
 
 accountId = config.get('accountId')
-if not accountId:
-    session = boto3.Session()
-    region = session.region_name
+# Strengthen region resolution priority: boto3 session -> env var -> existing config -> default
+_env_region = os.environ.get("AWS_REGION") or os.environ.get("AWS_DEFAULT_REGION")
+_session = boto3.Session()
+_session_region = _session.region_name
+resolved_region = _session_region or _env_region or config.get('region') or "us-west-2"
 
+if not accountId:
     sts = boto3.client("sts")
     response = sts.get_caller_identity()
     accountId = response["Account"]
     config['accountId'] = accountId
-    config['region'] = region
+    config['region'] = resolved_region
     with open(config_path, "w", encoding="utf-8") as f:
         json.dump(config, f, indent=2)
+else:
+    # If accountId exists but region is empty/None, restore with resolved value
+    if not config.get('region'):
+        config['region'] = resolved_region
+        with open(config_path, "w", encoding="utf-8") as f:
+            json.dump(config, f, indent=2)
 
-bedrock_region = config.get("region", "")
+bedrock_region = config.get("region") or _env_region or "us-west-2"
+# If region in config is missing/None, persist the corrected value
+if config.get("region") != bedrock_region:
+    config['region'] = bedrock_region
+    with open(config_path, "w", encoding="utf-8") as f:
+        json.dump(config, f, indent=2)
 logger.info(f"bedrock_region: {bedrock_region}")
 projectName = config.get("projectName", "")
 logger.info(f"projectName: {projectName}")
