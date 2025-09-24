@@ -38,7 +38,7 @@ def create_bucket(bucket_name, region):
 def create_knowledge_base(knowledge_base_name, region):
     projectName = utils.projectName
 
-    # create role    
+    # Create role    
     role_name = f"role-knowledge-base-for-{projectName}-{region}"
 
     # IAM policy document for knowledge base role
@@ -128,8 +128,17 @@ def create_knowledge_base(knowledge_base_name, region):
         iam.put_role_policy(RoleName=role_name, PolicyName=f"knowledge-base-for-{projectName}-{region}", PolicyDocument=json.dumps(knowledge_base_policy))
         logger.info(f"Updated policy for existing role: {role_name}")
     
-    # create S3 Vector Bucket
-    client = boto3.client('s3vectors')
+    # Use environment credentials and region for shared client creation
+    _client_kwargs = {"region_name": region}
+    if utils.aws_access_key and utils.aws_secret_key:
+        _client_kwargs.update({
+            "aws_access_key_id": utils.aws_access_key,
+            "aws_secret_access_key": utils.aws_secret_key,
+            "aws_session_token": utils.aws_session_token,
+        })
+
+    # Create S3 Vector Bucket client
+    client = boto3.client('s3vectors', **_client_kwargs)
 
     config = utils.load_config()
     s3_vector_bucket_name = config.get('s3_vector_bucket_name', "")
@@ -141,21 +150,29 @@ def create_knowledge_base(knowledge_base_name, region):
         s3_vector_bucket_name = f"s3-vector-for-{projectName}-{utils.accountId}-{region}"
         logger.info(f"s3_vector_bucket_name: {s3_vector_bucket_name}")
                 
-        response = client.list_vector_buckets(maxResults=50)        
+        response = client.list_vector_buckets(maxResults=50)
         vectorBuckets = response.get('vectorBuckets', [])
         if not any(vectorBucket['vectorBucketName'] == s3_vector_bucket_name for vectorBucket in vectorBuckets):
             response = client.create_vector_bucket(vectorBucketName=s3_vector_bucket_name)
             logger.info(f"response of create_vector_bucket: {response}")
 
             logger.info(f"s3_vector_bucket_name: {s3_vector_bucket_name} is created.")
+            # Refresh list to fetch ARN after creation
+            response = client.list_vector_buckets(maxResults=50)
+            vectorBuckets = response.get('vectorBuckets', [])
         else:
             logger.info(f"s3_vector_bucket_name: {s3_vector_bucket_name} is already exists.")
 
+        # Resolve ARN for the target bucket
         for vectorBucket in vectorBuckets:
-            if vectorBucket['vectorBucketName'] == s3_vector_bucket_name:
-                s3_vector_bucket_arn = vectorBucket['vectorBucketArn']
+            if vectorBucket.get('vectorBucketName') == s3_vector_bucket_name:
+                s3_vector_bucket_arn = vectorBucket.get('vectorBucketArn', '')
                 logger.info(f"s3_vector_bucket_arn: {s3_vector_bucket_arn}")
                 break
+        if not s3_vector_bucket_arn:
+            # As a fallback, try describing the bucket if API exists; otherwise raise
+            logger.error("Failed to resolve s3_vector_bucket_arn after creation/list. Aborting.")
+            raise ValueError("s3_vector_bucket_arn is empty")
         
         config['s3_vector_bucket_name'] = s3_vector_bucket_name        
         config['s3_vector_bucket_arn'] = s3_vector_bucket_arn
@@ -201,8 +218,8 @@ def create_knowledge_base(knowledge_base_name, region):
         with open(config_path, "w", encoding="utf-8") as f:
             json.dump(config, f, indent=2)
 
-    # create knowledge base
-    #parsingModelArn = f"arn:aws:bedrock:{region}::foundation-model/anthropic.claude-3-7-sonnet-20250219-v1:0"
+    # Create knowledge base
+    # parsingModelArn = f"arn:aws:bedrock:{region}::foundation-model/anthropic.claude-3-7-sonnet-20250219-v1:0"
     parsingModelArn = f"arn:aws:bedrock:{region}::foundation-model/anthropic.claude-3-5-sonnet-20241022-v2:0"
     embeddingModelArn = f"arn:aws:bedrock:{region}::foundation-model/amazon.titan-embed-text-v2:0"
 
@@ -210,11 +227,12 @@ def create_knowledge_base(knowledge_base_name, region):
     knowledge_base_id = config.get('knowledge_base_id', "")
     logger.info(f"knowledge_base_id: {knowledge_base_id}")  
     if not knowledge_base_id:
-        response = boto3.client('bedrock-agent').list_knowledge_bases(maxResults=50)
+        bedrock_agent = boto3.client('bedrock-agent', **_client_kwargs)
+        response = bedrock_agent.list_knowledge_bases(maxResults=50)
         knowledge_bases = response.get('knowledgeBaseSummaries', [])
         if not any(knowledge_base['name'] == knowledge_base_name for knowledge_base in knowledge_bases):
             logger.info(f"knowledge_base_name: {knowledge_base_name} is not exists.")
-            response = boto3.client('bedrock-agent').create_knowledge_base(
+            response = bedrock_agent.create_knowledge_base(
                 name=knowledge_base_name,
                 description=f"Knowledge base for {projectName} using s3 vector",
                 roleArn=role_arn,
@@ -272,7 +290,8 @@ def create_knowledge_base(knowledge_base_name, region):
         config['data_source_name'] = data_source_name
         logger.info(f"data_source_name: {data_source_name}")
 
-        response = boto3.client('bedrock-agent').list_data_sources(knowledgeBaseId=knowledge_base_id)
+        bedrock_agent = boto3.client('bedrock-agent', **_client_kwargs)
+        response = bedrock_agent.list_data_sources(knowledgeBaseId=knowledge_base_id)
         data_sources = response.get('dataSources', [])
         logger.info(f"data_sources: {data_sources}")
 
@@ -285,7 +304,7 @@ def create_knowledge_base(knowledge_base_name, region):
 
         if not existing_data_source:
             try:
-                response = boto3.client('bedrock-agent').create_data_source(
+                response = bedrock_agent.create_data_source(
                     knowledgeBaseId=knowledge_base_id,
                     name=data_source_name,
                     description=f"Data source for {projectName} using s3 vector",
