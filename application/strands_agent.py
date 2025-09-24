@@ -65,12 +65,10 @@ def get_model():
     maxReasoningOutputTokens=64000
     thinking_budget = min(maxOutputTokens, maxReasoningOutputTokens-1000)
 
-    # AWS 자격 증명 설정
     aws_access_key = os.environ.get('AWS_ACCESS_KEY_ID')
     aws_secret_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
     aws_session_token = os.environ.get('AWS_SESSION_TOKEN')
 
-    # Bedrock 클라이언트 설정
     bedrock_config = Config(
         read_timeout=900,
         connect_timeout=900,

@@ -21,6 +21,8 @@ def load_config(mcp_type):
         mcp_type = "repl_coder"
     elif mcp_type == "RAG":
         mcp_type = "kb-retriever"
+    elif mcp_type == "use-aws":
+        mcp_type = "use-aws"
     
     if mcp_type == "kb-retriever":
         return {
@@ -82,6 +84,18 @@ def load_config(mcp_type):
                 }
             }
         }
+    
+    elif mcp_type == "use-aws":
+        return {
+            "mcpServers": {
+                "use-aws": {
+                    "command": "python",
+                    "args": [
+                        f"{workingDir}/mcp_server_use_aws.py"
+                    ]
+                }
+            }
+        }    
     
     elif mcp_type == "사용자 설정":
         return mcp_user_config
